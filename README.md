@@ -21,7 +21,7 @@
 cargo build
 ```
 
-在这台机器上，Windows PowerShell 里可能没有直接配置 `cargo`，但 WSL 中可以使用 Rust 工具链：
+在 WSL 中可以使用 Rust 工具链：
 
 ```bash
 wsl.exe bash -lc 'cd /mnt/c/Users/acszd/Documents/Codex/2026-06-15/a-python-c-c-rust-java/outputs/exp-audit-rs && cargo build'
@@ -60,7 +60,7 @@ error_counts:
 
 ## 工程说明
 
-这个项目解决的重点不是模型推理本身，而是实验资料的可复盘问题。重复跑实验时，配置、日志、输出和报告很容易散落或混在一起。`exp-audit-rs` 会为实验目录生成稳定的文件清单和统计摘要，让一次实验更容易检查、复盘和交接。
+这个项目解决的重点是实验资料的可复盘问题。重复跑实验时，配置、日志、输出和报告很容易散落或混在一起。`exp-audit-rs` 会为实验目录生成稳定的文件清单和统计摘要，让一次实验更容易检查、复盘和交接。
 
 代码按普通 Rust crate 组织：
 
@@ -70,7 +70,3 @@ error_counts:
 - `src/report.rs`：生成 Markdown 审计报告。
 - `src/diff.rs`：对比两次实验目录。
 - `src/main.rs`：命令行入口。
-
-## 项目定位
-
-这个项目适合描述为一个独立开发的 Rust 科研流程辅助工具。它不是课程作业，也不声称实现了新的 VLM 攻击算法。它的贡献点是为实验目录提供轻量级的审计、统计和报告生成能力，帮助提升实验资料的可追踪性和可复盘性。
