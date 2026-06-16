@@ -26,7 +26,7 @@ fn run() -> CliResult<()> {
 
     match args[0].as_str() {
         "scan" => {
-            // scan 只建立文件清单，不需要解析日志内容。
+            // scan 只建立文件清单
             let root = required_path(&args, 1, "scan <root>")?;
             let manifest = scan(root)?;
             if has_flag(&args, "--json") {
@@ -36,7 +36,7 @@ fn run() -> CliResult<()> {
             }
         }
         "validate" => {
-            // validate 会同时使用文件清单和日志统计结果。
+            // validate 同时使用文件清单和日志统计结果
             let root = required_path(&args, 1, "validate <root>")?;
             let manifest = scan(&root)?;
             let summary = summarize(&root)?;
@@ -60,7 +60,6 @@ fn run() -> CliResult<()> {
             }
         }
         "report" => {
-            // report 本质上是 scan、summarize、validate 三步结果的组合。
             let root = required_path(&args, 1, "report <root> [--output <path>]")?;
             let output = output_path(&args).unwrap_or_else(|| PathBuf::from("audit-report.md"));
             let manifest = scan(&root)?;
@@ -114,7 +113,7 @@ fn has_flag(args: &[String], flag: &str) -> bool {
 }
 
 fn output_path(args: &[String]) -> Option<PathBuf> {
-    // 简单手写参数解析，同时支持 --output 和 -o。
+    // 同时支持 --output 和 -o
     args.iter()
         .position(|arg| arg == "--output" || arg == "-o")
         .and_then(|index| args.get(index + 1))
@@ -146,7 +145,6 @@ fn print_manifest(manifest: &exp_audit_rs::artifact::AuditManifest) {
 }
 
 fn manifest_to_json(manifest: &exp_audit_rs::artifact::AuditManifest) -> String {
-    // 项目避免外部 crate，因此这里手工组装紧凑 JSON。
     let artifacts = manifest
         .artifacts
         .iter()
