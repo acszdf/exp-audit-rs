@@ -12,7 +12,7 @@ pub enum ArtifactKind {
     Other,
 }
 
-/// One file discovered under an experiment directory.
+/// 实验目录下扫描到的单个文件。
 #[derive(Debug, Clone)]
 pub struct Artifact {
     pub path: PathBuf,
@@ -20,7 +20,7 @@ pub struct Artifact {
     pub size_bytes: u64,
 }
 
-/// Stable inventory produced by the scanner before validation or reporting.
+/// 扫描阶段产出的稳定文件清单，后续校验和报告都基于它。
 #[derive(Debug, Clone)]
 pub struct AuditManifest {
     pub root: PathBuf,
@@ -28,7 +28,7 @@ pub struct AuditManifest {
 }
 
 impl AuditManifest {
-    /// Count by artifact kind for human reports and validation rules.
+    /// 按文件类型统计数量，用于报告展示和校验规则。
     pub fn count_by_kind(&self) -> BTreeMap<ArtifactKind, usize> {
         let mut counts = BTreeMap::new();
         for artifact in &self.artifacts {
@@ -46,7 +46,7 @@ impl AuditManifest {
 }
 
 impl ArtifactKind {
-    /// Keep display labels stable across text, JSON, and Markdown outputs.
+    /// 统一文本、JSON 和 Markdown 输出中的类型名称。
     pub fn as_str(&self) -> &'static str {
         match self {
             ArtifactKind::Config => "config",

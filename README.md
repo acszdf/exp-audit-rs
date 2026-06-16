@@ -1,33 +1,33 @@
 # exp-audit-rs
 
-`exp-audit-rs` is a Rust command-line tool for auditing research experiment folders. It scans configs, logs, result files, reports, and output artifacts, then produces structured summaries and reproducibility-oriented Markdown reports.
+`exp-audit-rs` 是一个用 Rust 编写的命令行工具，用于审计科研实验目录。它可以扫描配置文件、日志、结果文件、报告和输出 artifact，并生成结构化统计和面向复盘的 Markdown 报告。
 
-The first target scenario is small VLM safety reproduction work, where experiment configs, JSONL logs, result JSON files, and generated reports are often scattered across directories.
+项目最初面向小规模 VLM safety 复现实验场景：实验配置、JSONL 日志、结果 JSON 和阶段报告经常分散在不同目录里，后续检查和交接都比较麻烦。
 
-## Features
+## 功能
 
-- Scan an experiment directory and classify artifacts.
-- Validate whether key experiment materials are missing.
-- Stream-parse JSONL records and tolerate malformed lines.
-- Summarize success/failure counts, method distribution, errors, and latency.
-- Generate a Markdown audit report.
-- Compare two experiment folders.
+- 扫描实验目录，并按类型识别 artifact。
+- 检查关键实验材料是否缺失。
+- 按行解析 JSONL 记录，并容忍少量损坏日志行。
+- 统计成功/失败数量、方法分布、错误类型和耗时。
+- 生成 Markdown 审计报告。
+- 对比两个实验目录的统计差异。
 
-## Build
+## 构建
 
-This repository pins the Rust toolchain in `rust-toolchain.toml`.
+仓库通过 `rust-toolchain.toml` 固定 Rust 工具链版本。
 
 ```bash
 cargo build
 ```
 
-On this machine, Windows PowerShell may not expose `cargo`, but WSL has the toolchain:
+在这台机器上，Windows PowerShell 里可能没有直接配置 `cargo`，但 WSL 中可以使用 Rust 工具链：
 
 ```bash
 wsl.exe bash -lc 'cd /mnt/c/Users/acszd/Documents/Codex/2026-06-15/a-python-c-c-rust-java/outputs/exp-audit-rs && cargo build'
 ```
 
-## Usage
+## 使用
 
 ```bash
 cargo run -- scan examples/vlm_safety_run_a
@@ -37,13 +37,13 @@ cargo run -- report examples/vlm_safety_run_a --output audit-report.md
 cargo run -- diff examples/vlm_safety_run_a examples/vlm_safety_run_b
 ```
 
-Machine-readable output is available for `scan`, `summarize`, `validate`, and `diff`:
+`scan`、`summarize`、`validate` 和 `diff` 支持机器可读的 JSON 输出：
 
 ```bash
 cargo run -- scan examples/vlm_safety_run_a --json
 ```
 
-## Example Output
+## 示例输出
 
 ```text
 records: 4
@@ -58,19 +58,19 @@ error_counts:
   policy_refusal: 1
 ```
 
-## Engineering Notes
+## 工程说明
 
-The main engineering problem is not model inference itself. The tool addresses the reproducibility problem around experiments: configs, logs, outputs, and reports are easy to lose or mix when experiments are run repeatedly. `exp-audit-rs` creates a deterministic inventory and summary so that an experiment folder can be checked and handed off.
+这个项目解决的重点不是模型推理本身，而是实验资料的可复盘问题。重复跑实验时，配置、日志、输出和报告很容易散落或混在一起。`exp-audit-rs` 会为实验目录生成稳定的文件清单和统计摘要，让一次实验更容易检查、复盘和交接。
 
-The code is organized as a normal Rust crate:
+代码按普通 Rust crate 组织：
 
-- `src/scanner.rs`: recursive artifact scanning and classification.
-- `src/summary.rs`: streaming JSONL parsing and metric aggregation.
-- `src/validate.rs`: completeness and quality checks.
-- `src/report.rs`: Markdown report rendering.
-- `src/diff.rs`: cross-run comparison.
-- `src/main.rs`: CLI interface.
+- `src/scanner.rs`：递归扫描实验 artifact 并分类。
+- `src/summary.rs`：按行解析 JSONL 日志并聚合指标。
+- `src/validate.rs`：检查实验材料完整性和日志质量。
+- `src/report.rs`：生成 Markdown 审计报告。
+- `src/diff.rs`：对比两次实验目录。
+- `src/main.rs`：命令行入口。
 
-## Project Positioning
+## 项目定位
 
-This project is suitable to describe as an independently developed Rust utility for research workflow support. It is not a course assignment and does not claim to implement a new VLM attack algorithm. Its contribution is engineering support for experiment auditability and reproducibility.
+这个项目适合描述为一个独立开发的 Rust 科研流程辅助工具。它不是课程作业，也不声称实现了新的 VLM 攻击算法。它的贡献点是为实验目录提供轻量级的审计、统计和报告生成能力，帮助提升实验资料的可追踪性和可复盘性。
