@@ -24,7 +24,7 @@ cargo build
 在 WSL 中可以使用 Rust 工具链：
 
 ```bash
-wsl.exe bash -lc 'cd /mnt/c/Users/acszd/Documents/Codex/2026-06-15/a-python-c-c-rust-java/outputs/exp-audit-rs && cargo build'
+wsl.exe bash -lc 'cd /mnt/c/Users/acszd/Documents/code/exp-audit-rs && cargo build'
 ```
 
 ## 使用
