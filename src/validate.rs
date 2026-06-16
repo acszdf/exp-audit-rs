@@ -13,7 +13,7 @@ pub struct ValidationIssue {
     pub message: String,
 }
 
-/// 将文件清单和日志统计转换成可以直接处理的审计问题。
+/// 将文件清单和日志统计转换成可以直接处理的审计问题
 pub fn validate(manifest: &AuditManifest, summary: &ExperimentSummary) -> Vec<ValidationIssue> {
     let counts = manifest.count_by_kind();
     let mut issues = Vec::new();
@@ -34,7 +34,7 @@ pub fn validate(manifest: &AuditManifest, summary: &ExperimentSummary) -> Vec<Va
         ));
     }
     if summary.records == 0 {
-        // 没有任何记录属于阻塞问题，因为后续统计会失去意义。
+        // 没有任何记录属于阻塞问题
         issues.push(error(
             "no parsed experiment records: jsonl logs are empty or unavailable",
         ));
@@ -75,7 +75,6 @@ fn warning(message: impl Into<String>) -> ValidationIssue {
 }
 
 pub fn issues_to_json(issues: &[ValidationIssue]) -> String {
-    // 手写 JSON 输出，保持工具零外部依赖。
     let items = issues
         .iter()
         .map(|issue| {
