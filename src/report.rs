@@ -8,7 +8,7 @@ pub fn render_markdown(
     summary: &ExperimentSummary,
     issues: &[ValidationIssue],
 ) -> String {
-    // 生成普通 Markdown，方便直接在 GitHub 上阅读。
+    // 生成 Markdown
     let mut output = String::new();
     output.push_str("# Experiment Audit Report\n\n");
     output.push_str(&format!("- Generated unix time: `{}`\n", unix_time()));
@@ -73,7 +73,7 @@ pub fn render_markdown(
 
     output.push_str("\n## Representative Artifacts\n\n");
     output.push_str("| Path | Kind | Size |\n| --- | --- | ---: |\n");
-    // 大实验目录可能文件很多，这里限制展示数量以保持报告可读。
+    // 限制展示数量以保持报告可读
     for artifact in manifest.artifacts.iter().take(30) {
         output.push_str(&format!(
             "| `{}` | {} | {} |\n",
@@ -104,7 +104,7 @@ fn severity_label(severity: &Severity) -> &'static str {
 }
 
 fn unix_time() -> u64 {
-    // 使用标准库时间戳，避免额外引入日期时间依赖。
+    // 使用标准库时间戳
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|duration| duration.as_secs())
