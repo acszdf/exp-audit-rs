@@ -1,0 +1,7 @@
+experiment: vlm_safety_smoke_b
+model: llava-v1.5-7b
+dataset: small_manual_probe
+method: bap_ood
+seed: 20260615
+max_samples: 6
+notes: modified smoke run with an OOD filtering step

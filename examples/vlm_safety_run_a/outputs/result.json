@@ -1,0 +1,7 @@
+{
+  "experiment": "vlm_safety_smoke_a",
+  "samples": 4,
+  "success": 2,
+  "failed": 1,
+  "unknown": 1
+}

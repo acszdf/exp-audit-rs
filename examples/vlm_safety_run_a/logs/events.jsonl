@@ -1,0 +1,5 @@
+{"sample_id":"a001","method":"bap","status":"success","latency_ms":1840.5}
+{"sample_id":"a002","method":"bap","status":"failed","error_type":"policy_refusal","latency_ms":2010.0}
+{"sample_id":"a003","method":"bap","status":"success","latency_ms":1732.2}
+{"sample_id":"a004","method":"bap","status":"unknown","latency_ms":1550.0}
+this line is intentionally malformed

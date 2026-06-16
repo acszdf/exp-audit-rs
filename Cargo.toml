@@ -1,0 +1,8 @@
+[package]
+name = "exp-audit-rs"
+version = "0.1.0"
+edition = "2021"
+description = "A Rust CLI for auditing experiment artifacts, logs, configs, and reproducibility reports."
+license = "MIT"
+
+[dependencies]

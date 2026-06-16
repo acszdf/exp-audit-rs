@@ -1,0 +1,7 @@
+experiment: vlm_safety_smoke_a
+model: llava-v1.5-7b
+dataset: small_manual_probe
+method: bap
+seed: 20260615
+max_samples: 5
+notes: baseline smoke run for artifact auditing
