@@ -16,7 +16,7 @@ pub struct ExperimentSummary {
 }
 
 impl ExperimentSummary {
-    /// 将一条解析后的 JSONL 记录合并进总体统计。
+    /// 合并进总体统计
     pub fn merge_record(&mut self, record: ParsedRecord) {
         self.records += 1;
         match record.status.as_deref() {
@@ -58,7 +58,7 @@ pub fn summarize(root: impl AsRef<Path>) -> io::Result<ExperimentSummary> {
 
 fn summarize_dir(path: &Path, summary: &mut ExperimentSummary) -> io::Result<()> {
     let mut entries = fs::read_dir(path)?.collect::<io::Result<Vec<_>>>()?;
-    // 固定日志访问顺序，保证统计和输出更容易复现。
+    // 固定日志访问顺序
     entries.sort_by_key(|entry| entry.path());
 
     for entry in entries {
@@ -86,7 +86,6 @@ fn summarize_jsonl(path: &Path, summary: &mut ExperimentSummary) -> io::Result<(
 
         match parse_record(&line) {
             Some(record) => summary.merge_record(record),
-            // 单行日志损坏不应该导致整个实验目录无法审计。
             None => summary.malformed_lines += 1,
         }
     }
@@ -101,7 +100,7 @@ pub fn parse_record(line: &str) -> Option<ParsedRecord> {
     }
 
     Some(ParsedRecord {
-        // 兼容常见字段别名，因为不同实验脚本命名习惯不一样。
+        // 兼容常见字段别名
         status: string_field(trimmed, &["status", "result", "outcome"]).map(normalize_status),
         method: string_field(trimmed, &["method", "attack", "algorithm", "strategy"]),
         error: string_field(trimmed, &["error", "error_type", "exception"]),
@@ -152,7 +151,7 @@ fn number_field(line: &str, keys: &[&str]) -> Option<f64> {
 }
 
 fn extract_json_string(line: &str, key: &str) -> Option<String> {
-    // 当前实验事件是扁平 JSONL，用这个轻量提取器即可覆盖需求。
+    // 轻量提取器
     let marker = format!("\"{}\"", key);
     let start = line.find(&marker)? + marker.len();
     let after_key = line[start..].trim_start();
