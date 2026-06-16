@@ -9,7 +9,7 @@ pub fn scan(root: impl AsRef<Path>) -> io::Result<AuditManifest> {
 
     let mut artifacts = Vec::new();
     collect_artifacts(&canonical_root, &canonical_root, &mut artifacts)?;
-    // 固定路径顺序，保证多次运行生成的报告可以直接比较。
+    // 固定路径顺序
     artifacts.sort_by(|left, right| left.path.cmp(&right.path));
 
     Ok(AuditManifest {
@@ -20,7 +20,7 @@ pub fn scan(root: impl AsRef<Path>) -> io::Result<AuditManifest> {
 
 fn collect_artifacts(root: &Path, current: &Path, artifacts: &mut Vec<Artifact>) -> io::Result<()> {
     let mut entries = fs::read_dir(current)?.collect::<io::Result<Vec<_>>>()?;
-    // 固定遍历顺序，避免生成报告时出现无意义的顺序变化。
+    // 固定遍历顺序
     entries.sort_by_key(|entry| entry.path());
 
     for entry in entries {
@@ -61,7 +61,7 @@ pub fn classify(path: &Path) -> ArtifactKind {
         "png" | "jpg" | "jpeg" | "webp" => ArtifactKind::Image,
         "md" | "html" => ArtifactKind::Report,
         "json" => {
-            // JSON 文件默认按结果文件处理，除非路径明显表示它是配置文件。
+            // JSON 文件默认按结果文件处理
             if path_text.contains("result")
                 || path_text.contains("output")
                 || path_text.contains("eval")
@@ -78,7 +78,7 @@ pub fn classify(path: &Path) -> ArtifactKind {
 }
 
 fn normalize_path(path: PathBuf) -> PathBuf {
-    // 即使在 Windows 上运行，报告里也统一使用一种路径分隔符。
+    // 统一使用一种路径分隔符
     let normalized = path.to_string_lossy().replace('\\', "/");
     PathBuf::from(normalized)
 }
