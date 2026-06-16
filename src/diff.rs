@@ -20,7 +20,7 @@ pub fn diff(
     right_manifest: &AuditManifest,
     right_summary: &ExperimentSummary,
 ) -> AuditDiff {
-    // 这里比较高层审计指标，不逐个比较所有文件路径。
+    // 比较高层审计指标
     let left_kinds: BTreeSet<_> = left_manifest.count_by_kind().keys().cloned().collect();
     let right_kinds: BTreeSet<_> = right_manifest.count_by_kind().keys().cloned().collect();
 
@@ -61,7 +61,7 @@ only_right_kinds: {:?}
 }
 
 pub fn to_json(diff: &AuditDiff) -> String {
-    // 这个结构较小，手写 JSON 可以继续保持零外部依赖。
+    // 手写 JSON 保持零外部依赖
     format!(
         "{{\n  \"left_root\": \"{}\",\n  \"right_root\": \"{}\",\n  \"artifact_delta\": {},\n  \"record_delta\": {},\n  \"success_delta\": {},\n  \"failed_delta\": {},\n  \"only_left_kinds\": {},\n  \"only_right_kinds\": {}\n}}",
         escape_json(&diff.left_root),
