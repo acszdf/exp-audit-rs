@@ -9,6 +9,7 @@ pub fn scan(root: impl AsRef<Path>) -> io::Result<AuditManifest> {
 
     let mut artifacts = Vec::new();
     collect_artifacts(&canonical_root, &canonical_root, &mut artifacts)?;
+    // Sort paths so repeated runs produce comparable reports.
     artifacts.sort_by(|left, right| left.path.cmp(&right.path));
 
     Ok(AuditManifest {
@@ -19,6 +20,7 @@ pub fn scan(root: impl AsRef<Path>) -> io::Result<AuditManifest> {
 
 fn collect_artifacts(root: &Path, current: &Path, artifacts: &mut Vec<Artifact>) -> io::Result<()> {
     let mut entries = fs::read_dir(current)?.collect::<io::Result<Vec<_>>>()?;
+    // Deterministic traversal makes git diffs and generated reports stable.
     entries.sort_by_key(|entry| entry.path());
 
     for entry in entries {
@@ -59,6 +61,8 @@ pub fn classify(path: &Path) -> ArtifactKind {
         "png" | "jpg" | "jpeg" | "webp" => ArtifactKind::Image,
         "md" | "html" => ArtifactKind::Report,
         "json" => {
+            // JSON files are treated as result artifacts unless their path
+            // clearly says they are configuration files.
             if path_text.contains("result")
                 || path_text.contains("output")
                 || path_text.contains("eval")
@@ -75,6 +79,7 @@ pub fn classify(path: &Path) -> ArtifactKind {
 }
 
 fn normalize_path(path: PathBuf) -> PathBuf {
+    // Reports should use one path separator style even when run from Windows.
     let normalized = path.to_string_lossy().replace('\\', "/");
     PathBuf::from(normalized)
 }

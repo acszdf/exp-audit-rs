@@ -8,6 +8,7 @@ pub fn render_markdown(
     summary: &ExperimentSummary,
     issues: &[ValidationIssue],
 ) -> String {
+    // Render a plain Markdown report so it can be read directly on GitHub.
     let mut output = String::new();
     output.push_str("# Experiment Audit Report\n\n");
     output.push_str(&format!("- Generated unix time: `{}`\n", unix_time()));
@@ -72,6 +73,7 @@ pub fn render_markdown(
 
     output.push_str("\n## Representative Artifacts\n\n");
     output.push_str("| Path | Kind | Size |\n| --- | --- | ---: |\n");
+    // Limit the table to keep reports readable for large experiment folders.
     for artifact in manifest.artifacts.iter().take(30) {
         output.push_str(&format!(
             "| `{}` | {} | {} |\n",
@@ -102,6 +104,7 @@ fn severity_label(severity: &Severity) -> &'static str {
 }
 
 fn unix_time() -> u64 {
+    // Standard-library timestamp avoids adding a date-time dependency.
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map(|duration| duration.as_secs())

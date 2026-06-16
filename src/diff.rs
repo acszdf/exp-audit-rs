@@ -20,6 +20,7 @@ pub fn diff(
     right_manifest: &AuditManifest,
     right_summary: &ExperimentSummary,
 ) -> AuditDiff {
+    // Compare high-level audit signals, not every individual file path.
     let left_kinds: BTreeSet<_> = left_manifest.count_by_kind().keys().cloned().collect();
     let right_kinds: BTreeSet<_> = right_manifest.count_by_kind().keys().cloned().collect();
 
@@ -60,6 +61,7 @@ only_right_kinds: {:?}
 }
 
 pub fn to_json(diff: &AuditDiff) -> String {
+    // Keep JSON output available without pulling in serde for this small type.
     format!(
         "{{\n  \"left_root\": \"{}\",\n  \"right_root\": \"{}\",\n  \"artifact_delta\": {},\n  \"record_delta\": {},\n  \"success_delta\": {},\n  \"failed_delta\": {},\n  \"only_left_kinds\": {},\n  \"only_right_kinds\": {}\n}}",
         escape_json(&diff.left_root),

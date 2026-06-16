@@ -16,6 +16,7 @@ pub struct ExperimentSummary {
 }
 
 impl ExperimentSummary {
+    /// Fold one parsed JSONL record into aggregate metrics.
     pub fn merge_record(&mut self, record: ParsedRecord) {
         self.records += 1;
         match record.status.as_deref() {
@@ -57,6 +58,7 @@ pub fn summarize(root: impl AsRef<Path>) -> io::Result<ExperimentSummary> {
 
 fn summarize_dir(path: &Path, summary: &mut ExperimentSummary) -> io::Result<()> {
     let mut entries = fs::read_dir(path)?.collect::<io::Result<Vec<_>>>()?;
+    // Visit logs in a stable order so averages and output stay reproducible.
     entries.sort_by_key(|entry| entry.path());
 
     for entry in entries {
@@ -84,6 +86,7 @@ fn summarize_jsonl(path: &Path, summary: &mut ExperimentSummary) -> io::Result<(
 
         match parse_record(&line) {
             Some(record) => summary.merge_record(record),
+            // A damaged line should not make the whole experiment unauditable.
             None => summary.malformed_lines += 1,
         }
     }
@@ -98,6 +101,7 @@ pub fn parse_record(line: &str) -> Option<ParsedRecord> {
     }
 
     Some(ParsedRecord {
+        // Support common aliases because different scripts name fields differently.
         status: string_field(trimmed, &["status", "result", "outcome"]).map(normalize_status),
         method: string_field(trimmed, &["method", "attack", "algorithm", "strategy"]),
         error: string_field(trimmed, &["error", "error_type", "exception"]),
@@ -148,6 +152,7 @@ fn number_field(line: &str, keys: &[&str]) -> Option<f64> {
 }
 
 fn extract_json_string(line: &str, key: &str) -> Option<String> {
+    // This lightweight extractor is enough for flat JSONL experiment events.
     let marker = format!("\"{}\"", key);
     let start = line.find(&marker)? + marker.len();
     let after_key = line[start..].trim_start();

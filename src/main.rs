@@ -26,6 +26,7 @@ fn run() -> CliResult<()> {
 
     match args[0].as_str() {
         "scan" => {
+            // Build only the artifact inventory; no log parsing is needed here.
             let root = required_path(&args, 1, "scan <root>")?;
             let manifest = scan(root)?;
             if has_flag(&args, "--json") {
@@ -35,6 +36,7 @@ fn run() -> CliResult<()> {
             }
         }
         "validate" => {
+            // Validation combines the file inventory with parsed log metrics.
             let root = required_path(&args, 1, "validate <root>")?;
             let manifest = scan(&root)?;
             let summary = summarize(&root)?;
@@ -58,6 +60,7 @@ fn run() -> CliResult<()> {
             }
         }
         "report" => {
+            // Report generation is intentionally a composition of scan + summarize + validate.
             let root = required_path(&args, 1, "report <root> [--output <path>]")?;
             let output = output_path(&args).unwrap_or_else(|| PathBuf::from("audit-report.md"));
             let manifest = scan(&root)?;
@@ -111,6 +114,7 @@ fn has_flag(args: &[String], flag: &str) -> bool {
 }
 
 fn output_path(args: &[String]) -> Option<PathBuf> {
+    // Small manual parser: accepts both --output and -o.
     args.iter()
         .position(|arg| arg == "--output" || arg == "-o")
         .and_then(|index| args.get(index + 1))
@@ -142,6 +146,7 @@ fn print_manifest(manifest: &exp_audit_rs::artifact::AuditManifest) {
 }
 
 fn manifest_to_json(manifest: &exp_audit_rs::artifact::AuditManifest) -> String {
+    // The project avoids external crates, so compact JSON is assembled here.
     let artifacts = manifest
         .artifacts
         .iter()

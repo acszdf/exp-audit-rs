@@ -13,6 +13,7 @@ pub struct ValidationIssue {
     pub message: String,
 }
 
+/// Convert scanned files and parsed records into actionable audit warnings.
 pub fn validate(manifest: &AuditManifest, summary: &ExperimentSummary) -> Vec<ValidationIssue> {
     let counts = manifest.count_by_kind();
     let mut issues = Vec::new();
@@ -33,6 +34,7 @@ pub fn validate(manifest: &AuditManifest, summary: &ExperimentSummary) -> Vec<Va
         ));
     }
     if summary.records == 0 {
+        // No records is blocking because later statistics would be meaningless.
         issues.push(error(
             "no parsed experiment records: jsonl logs are empty or unavailable",
         ));
@@ -73,6 +75,7 @@ fn warning(message: impl Into<String>) -> ValidationIssue {
 }
 
 pub fn issues_to_json(issues: &[ValidationIssue]) -> String {
+    // Manual JSON keeps the tool dependency-free for simple CLI use.
     let items = issues
         .iter()
         .map(|issue| {
